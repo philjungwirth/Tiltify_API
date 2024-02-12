@@ -57,7 +57,7 @@ paste0("https://tiltify.com/oauth/authorize?response_type=code&client_id=",clien
     "&scope=public")
 
 #Paste the code here!
-code <- "009c64f2899cd72253b21841f7a5c9bac571f5c21a0169dcb7c588a83c0c6d08" #Manual input
+code <- "0ba9bdb40a6e17962c297937d0de501698ad75d86ca20c2bb821fdffa16df722" #Manual input
 
 #################################################
 ######              Token
@@ -136,15 +136,15 @@ for (x in 1:length(ls_campaigns)) {
 
 campaign_vec <- unique(campaign_vec)
 
-
+rm(fundraising_event_id, fundraising_event_id_url, sub_campaign_vec, ls_campaigns, new_campaigns, fundraising_event_id_response)
 #################################################
 ######              Get Donations
 #################################################
 
 #Set parameters for loops
 x <- 1
-i <- 10
-limit <- 10
+i <- 100
+limit <- 100
 final_df <- list()
 
 
@@ -182,4 +182,6 @@ for (x in 1:length(campaign_vec)) {
   x = x + 1
 }
 
+rm(donations_response, ls_donations, new_donations, test, i, limit, x, campaigns_id, after_cursor, donations_url)
+View(final_df)
 
