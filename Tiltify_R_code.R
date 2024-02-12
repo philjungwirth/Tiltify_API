@@ -3,9 +3,10 @@
 ######              Tiltify API
 ######
 #################################################
+
 rm(list = ls()) #Remove all objects in the global environment
 
-setwd("C:/Users/philj/OneDrive/Desktop/Arbeit/06_WU_IMSM/01_Tiltify") #Set the Working Directory
+setwd("C:/Users/philj/OneDrive/Dokumente/GitHub/Tiltify_API/01_Tiltify") #Set the Working Directory
 
 #################################################
 ######              Install/Load Packages
@@ -34,28 +35,29 @@ invisible(
 
 rm(list = c("installed_libs", "libs")) #Removes unnecessary objects from GE
 
+#################################################
+######              Section 1
+######         Fetch Access Token
+#################################################
+
 
 #################################################
 ######              Authorization Code
 #################################################
 
-#hide the manuel inputs
-client_id <- "c2c9189d620072c5bed0b7ca21ec085ac4debafceb6f112d8c674723dc71491a" #Manuel input
-client_secret <- "8cc9f3763f97f81e39409f0dccc5063078388f0c9f7e21dd6c42198a2b42b1a4" #Manuel input
-redirect_uri <- "http://localhost:9000" #Manuel input
+#Manual inputs of your Tiltify Application Keys
+client_id <- "c2c9189d620072c5bed0b7ca21ec085ac4debafceb6f112d8c674723dc71491a" #Manual input
+client_secret <- "8cc9f3763f97f81e39409f0dccc5063078388f0c9f7e21dd6c42198a2b42b1a4" #Manual input
+redirect_uri <- "http://localhost:9000" #Manual input
 redirect_uri_encoded <- URLencode(redirect_uri, reserved = TRUE)
 
-#include the two objects in this line
+#Create URL, paste the URL in Web browser and copy the code
 paste0("https://tiltify.com/oauth/authorize?response_type=code&client_id=",client_id,
     "&redirect_uri=", redirect_uri_encoded,
     "&scope=public")
-#Copy this output (without the parenthesis) into your web browser. 
-#Log in in and click on authenticate -> "error" message 
-#The webadress is now something like: http://redirect_uri/?code=b02f2175b8787f5d64fdc927e3f3638cdc41fbcf53e7f4870b35654e7360b148
-#Copy everything after code= and paste down below
 
-#Copy the code here!
-code <- "009c64f2899cd72253b21841f7a5c9bac571f5c21a0169dcb7c588a83c0c6d08"
+#Paste the code here!
+code <- "009c64f2899cd72253b21841f7a5c9bac571f5c21a0169dcb7c588a83c0c6d08" #Manual input
 
 #################################################
 ######              Token
@@ -77,7 +79,107 @@ response <- POST(url, body = body_data, encode = "json", verbose())
 # Print the response
 content(response)
 
+#Save Access Token
 access_token <- content(response)$access_token
 
 rm(body_data, response, client_id, client_secret, code, redirect_uri, redirect_uri_encoded, url)
+
+
+#################################################
+######              Section 2
+######         Download Donations
+#################################################
+
+fundraising_event_id <- "e2fc5d0e-a625-424f-aca3-f8522d8d7ed1" #Change to the fundraising event you want to analyze
+
+#Set the limits how many entries should be downloaded per loop run (Max. 100)
+limit <- 10
+i <- 10
+
+#################################################
+######              Get Campaigns 
+#################################################
+
+fundraising_event_id_url <- paste0("https://v5api.tiltify.com/api/public/fundraising_events/",fundraising_event_id,"/supporting_events?&limit=", limit)
+
+fundraising_event_id_response <- GET(fundraising_event_id_url, add_headers("Authorization" = paste("Bearer", access_token)))
+
+ls_campaigns <- list(content(fundraising_event_id_response))
+
+after_cursor <- tail(ls_campaigns [[1]],1)$metadata$after
+
+
+while (i == limit) {
+  fundraising_event_id_url <- paste0("https://v5api.tiltify.com/api/public/fundraising_events/",fundraising_event_id,"/supporting_events?&limit=",limit, "&after=", after_cursor)
+  fundraising_event_id_response <- GET(fundraising_event_id_url, add_headers("Authorization" = paste("Bearer", access_token)))
+  
+  new_campaigns <- list(content(fundraising_event_id_response))
+  ls_campaigns <- c(ls_campaigns, new_campaigns)
+  
+  after_cursor <- tail(ls_campaigns[[length(ls_campaigns)]])$metadata$after
+  
+  i = length(ls_campaigns[[length(ls_campaigns)]]$data)
+}
+
+
+sub_campaign_vec <- vector()
+campaign_vec <- vector()
+#get vector for all the campaign id's
+for (x in 1:length(ls_campaigns)) {
+  for (i in 1:length(ls_campaigns[[x]]$data)) {
+    sub_campaign_vec[i] <- ls_campaigns[[x]]$data[[i]]$id
+    i = i + 1
+  }
+  campaign_vec <- c(campaign_vec, sub_campaign_vec)
+  x = x + 1 
+}
+
+campaign_vec <- unique(campaign_vec)
+
+
+#################################################
+######              Get Donations
+#################################################
+
+#Set parameters for loops
+x <- 1
+i <- 10
+limit <- 10
+final_df <- list()
+
+
+for (x in 1:length(campaign_vec)) {
+  
+  campaigns_id <- campaign_vec[x]
+  
+  donations_url <- paste0("https://v5api.tiltify.com/api/public/campaigns/", campaigns_id, "/donations?&limit=",limit)
+  donations_response <- GET(donations_url, add_headers("Authorization" = paste("Bearer", access_token)))
+  
+  
+  test <- list(content(donations_response)$data)
+  
+  if (length(test[[1]]) != 0) {
+    ls_donations <- list(content(donations_response)$data)  
+    
+    
+    after_cursor <- tail(list(content(donations_response))[[1]],1)$metadata$after
+    
+    i = length(ls_donations[[length(ls_donations)]])
+    
+    while (i == limit) {
+      donations_url <- paste0("https://v5api.tiltify.com/api/public/campaigns/", campaigns_id, "/donations?&limit=", limit, "&after=", after_cursor)
+      donations_response <- GET(donations_url, add_headers("Authorization" = paste("Bearer", access_token)))
+      
+      new_donations <- list(content(donations_response)$data)
+      ls_donations <- c(ls_donations, new_donations) 
+      after_cursor <- tail(list(content(donations_response))[[1]],1)$metadata$after
+      
+      i = length(new_donations[[length(new_donations)]])
+    }
+    
+    final_df <- c(final_df, ls_donations)
+  }
+  x = x + 1
+}
+
 
