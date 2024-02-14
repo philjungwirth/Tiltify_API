@@ -6,7 +6,7 @@
 
 rm(list = ls()) #Remove all objects in the global environment
 
-setwd("C:/Users/philj/OneDrive/Dokumente/GitHub/Tiltify_API/01_Tiltify") #Set the Working Directory
+setwd("C:/Users/philj/OneDrive/Dokumente/GitHub/Tiltify_API") #Set the Working Directory
 
 #################################################
 ######              Install/Load Packages
@@ -57,7 +57,7 @@ paste0("https://tiltify.com/oauth/authorize?response_type=code&client_id=",clien
     "&scope=public")
 
 #Paste the code here!
-code <- "0ba9bdb40a6e17962c297937d0de501698ad75d86ca20c2bb821fdffa16df722" #Manual input
+code <- "4bf73b27cf55d882eca4ff705fe8e8f2e0cf9fc3acabfdb045e02827858d02c0" #Manual input
 
 #################################################
 ######              Token
@@ -136,7 +136,7 @@ for (x in 1:length(ls_campaigns)) {
 
 campaign_vec <- unique(campaign_vec)
 
-rm(fundraising_event_id, fundraising_event_id_url, sub_campaign_vec, ls_campaigns, new_campaigns, fundraising_event_id_response)
+rm(fundraising_event_id, fundraising_event_id_url, sub_campaign_vec, ls_campaigns, new_campaigns, fundraising_event_id_response, after_cursor)
 #################################################
 ######              Get Donations
 #################################################
@@ -183,5 +183,7 @@ for (x in 1:length(campaign_vec)) {
 }
 
 rm(donations_response, ls_donations, new_donations, test, i, limit, x, campaigns_id, after_cursor, donations_url)
+
 View(final_df)
 
+json <- toJSON(final_df)
