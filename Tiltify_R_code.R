@@ -57,7 +57,7 @@ paste0("https://tiltify.com/oauth/authorize?response_type=code&client_id=",clien
     "&scope=public")
 
 #Paste the code here!
-code <- "4bf73b27cf55d882eca4ff705fe8e8f2e0cf9fc3acabfdb045e02827858d02c0" #Manual input
+code <- "51c434fe0839dda964be710a2c5c5d69d9078e31b565dc2bf358a1f461dd7b45" #Manual input
 
 #################################################
 ######              Token
@@ -100,13 +100,15 @@ i <- 10
 ######              Get Campaigns 
 #################################################
 
+
+
 fundraising_event_id_url <- paste0("https://v5api.tiltify.com/api/public/fundraising_events/",fundraising_event_id,"/supporting_events?&limit=", limit)
 
 fundraising_event_id_response <- GET(fundraising_event_id_url, add_headers("Authorization" = paste("Bearer", access_token)))
 
 ls_campaigns <- list(content(fundraising_event_id_response))
 
-after_cursor <- tail(ls_campaigns [[1]],1)$metadata$after
+after_cursor <- tail(ls_campaigns[[1]],1)$metadata$after
 
 
 while (i == limit) {
@@ -137,6 +139,46 @@ for (x in 1:length(ls_campaigns)) {
 campaign_vec <- unique(campaign_vec)
 
 rm(fundraising_event_id, fundraising_event_id_url, sub_campaign_vec, ls_campaigns, new_campaigns, fundraising_event_id_response, after_cursor)
+
+#################################################
+######              Get Donations Targets
+#################################################
+x <- 1
+
+df_target <- data.frame()
+
+
+for(x in 1:length(campaign_vec)) {
+  
+  campaigns_id <- campaign_vec[x]
+  
+  target_url <- paste0("https://v5api.tiltify.com/api/public/campaigns/", campaigns_id, "/targets?&limit=",limit)
+  target_response <- GET(target_url, add_headers("Authorization" = paste("Bearer", access_token)))
+  
+  test <- list(content(target_response)$data)
+  
+  if(length(test[[1]]) != 0 && is.null(test[[1]]) == FALSE) {
+    
+    df_target[x,1] <- campaign_vec[x]
+    df_target[x,2] <- test[[1]][[length(test[[1]])]]$amount$value
+    df_target[x,3] <- test[[1]][[length(test[[1]])]]$amount$currency
+    df_target[x,4] <- test[[1]][[length(test[[1]])]]$id
+    
+    x <- x + 1
+    
+  } else {
+  
+  x <- x + 1
+  
+  }
+  
+}
+
+colnames(df_target) <- c("campaign_id", "target", "currency", "target_id")
+df_target <- na.omit(df_target)
+
+
+
 #################################################
 ######              Get Donations
 #################################################
@@ -187,3 +229,6 @@ rm(donations_response, ls_donations, new_donations, test, i, limit, x, campaigns
 View(final_df)
 
 json <- toJSON(final_df)
+
+
+
