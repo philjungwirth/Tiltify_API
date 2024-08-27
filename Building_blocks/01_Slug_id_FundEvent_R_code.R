@@ -12,10 +12,10 @@
 # -> use this id to find all fundraising id's the streamer was a part of 
 # -> for now look manually to find the right event 
 # -> save the fundraising event id 
-# -> Use the event id to download the fundraising event id
+# -> Use the event id to download the fundraising event infromations
 
 ## Task 1: find slugs for a fundraising event
-## In our example it is the "Gamers for giving 20204" event
+## In our example it is the "Gamers for giving 2024" event
 slug_f_event1 <- "markstrom" #manual input after looking it up on Tiltify 
 
 

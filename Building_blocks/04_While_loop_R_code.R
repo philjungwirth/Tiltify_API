@@ -1,3 +1,5 @@
+campaigns_id <- "XXXXXXXXXXXXXXXXXXX" #change manually 
+
 limit <- 10
 i <- 10
 # Fetch the first batch of donations
