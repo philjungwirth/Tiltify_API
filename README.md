@@ -22,7 +22,7 @@ Fetch the Access Token:
 - Simply run the code and the access code will be stored in the GE
 
 ## Folder 2 - Building_blocks
-Overall we provide three different building blocks. 
+Overall we provide three different building blocks. However 3 and 4 are basically snippets from the first two.
 
 ### 01_Slug_id_FundEvent_R_code
 Let's say you want to know which campaigns contributed to a specific fundraising event, but you don't know the event ID.
@@ -39,3 +39,16 @@ The next building block is concerned with downloading every single donation that
 For this example we assume we know the specific event id (see how you could now use the first part of the upper code to find the id).
 
 The main idea is the following:
+- One uses the event id to download information on all campaigns that contribute
+- Then save all campaign id's in a vector
+- Use that vector to fetch every donation for each campaign
+
+
+### 03_Slug_R_cod
+This code basically starts with a slug name and then gets all donations for a compaign that was looked up manually from all campaigns that the slug was/is running. 
+
+### 04_While_loop_R_code
+This code block shows how get all donations if you have a campaign id. 
+
+
+*Have fun with the Tiltify code and do not hesitate to reach out if you need something! *
