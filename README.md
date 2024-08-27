@@ -51,4 +51,4 @@ This code basically starts with a slug name and then gets all donations for a co
 This code block shows how get all donations if you have a campaign id. 
 
 
-*Have fun with the Tiltify code and do not hesitate to reach out if you need something! *
+*Have fun with the Tiltify code and do not hesitate to reach out if you need something!*
