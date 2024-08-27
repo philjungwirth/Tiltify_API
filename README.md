@@ -22,8 +22,20 @@ Fetch the Access Token:
 - Simply run the code and the access code will be stored in the GE
 
 ## Folder 2 - Building_blocks
-Manually input the fundraising event ID.
+Overall we provide three different building blocks. 
 
-The first step is to get a list of all the campaigns that contributed to the fundraising event.
+### 01_Slug_id_FundEvent_R_code
+Let's say you want to know which campaigns contributed to a specific fundraising event, but you don't know the event ID.
+If you have the name of the event, you can take a look at the Tiltify website to see the top contributers. 
+For example, if we want to get information on the "Gamers for giving 2024" event we see that a streamer with the slug "markstrom" contributed. 
+Now we can do the following:
+- Use the slug name to get the streamer id
+- Use the streamer id to download all the events he contributed & manually look up the right event
+- Store the right event id
+- Download the campaigns that contributed, by using the event id
 
-In the second step the code loops through the list of the campaigns and downloads all donations.  
+### 02_Fundraiser_event_R_code 
+The next building block is concerned with downloading every single donation that was given to a specific fundraising event. 
+For this example we assume we know the specific event id (see how you could now use the first part of the upper code to find the id).
+
+The main idea is the following:
