@@ -1,8 +1,9 @@
 # Tiltify_API
 
-This code is structured in two sections. First the code will fetch an access token and secondly it will download all available donations for a pre-defined fundraising event.
+This reposatory should help you to download data from the Tiltify platform using the programming language R.
+The main idea is that we provide two folders. The first one (AP_access_code) helps you to retrieve your personalized code that you will need to fatch data from the API. On the other hand, the second folder (Building_blocks) provides some basic idea of how to retrieve the final data. Basically we want to show how it is done in some specific instances and you can than start to build your on reqeust based on those basic code lines.
 
-## Section 1 - Fetch Access Token
+## Folder 1 - API_access_code
 Tiltify Application:
 - Create Tiltify account
 - Create an application (can be found under "Developers")
@@ -20,7 +21,7 @@ Generate Code for token:
 Fetch the Access Token:
 - Simply run the code and the access code will be stored in the GE
 
-## Second Section
+## Folder 2 - Building_blocks
 Manually input the fundraising event ID.
 
 The first step is to get a list of all the campaigns that contributed to the fundraising event.
